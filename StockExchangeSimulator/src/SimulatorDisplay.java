@@ -3,18 +3,18 @@ import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import javafx.event.ActionEvent;
 import java.awt.*;
-import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 
-public class SimulatorDisplay extends JFrame {
+public class SimulatorDisplay extends JFrame implements IDisplayable {
 
     private int price = 10;
-    private JLabel testPriceIndicator = new JLabel("Current bid price for FB : $" + price);
-    private JButton btn = new JButton("Market Buy");
+    private JLabel testPriceIndicator = new JLabel("$" + price);
+    private JButton btn = new JButton("run command");
     private JTextArea log = new JTextArea();
     private JTextField commandField = new JTextField();
 
     public SimulatorDisplay() {
+
         setSize(400, 400);
         setTitle("simulator");
         setVisible(true);
@@ -32,18 +32,42 @@ public class SimulatorDisplay extends JFrame {
         getContentPane().add(commandField);
         getContentPane().add(btn);
 
+        pack();
+
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
+
+                //log.append("\nMarket Buy for FB at $" + price);
+                //price++;
+                //testPriceIndicator.setText("Current bid price for FB : $" + price);
+
+                //log.append("\n" + commandField.getText());
+                InputManager.instance.handleInput(commandField.getText());
                 commandField.setText("");
-                // log.setText(log.getText() + "\nMarket Buy for FB at $" + price);
-                log.append("\nMarket Buy for FB at $" + price);
-                // log.setCaretPosition(log.getText().length());
-                price++;
-                testPriceIndicator.setText("Current bid price for FB : $" + price);
 
             }
         });
     }
 
+    @Override
+    public void displayMessage(String message) {
+        log.append("\n" + message);
+        
+    }
+
+    @Override
+    public void updatePrice() {
+        // TODO Auto-generated method stub
+
+        double prev = Double.parseDouble(testPriceIndicator.getText().substring(1,testPriceIndicator.getText().length()));
+        double current = CounterManager.instance.getCounters().get("FB").getPrice();
+        if(current >= prev)
+            testPriceIndicator.setForeground(Color.GREEN); 
+        else
+            testPriceIndicator.setForeground(Color.RED);
+
+        testPriceIndicator.setText("$"+CounterManager.instance.getCounters().get("FB").getPrice());
+
+    }
 }
