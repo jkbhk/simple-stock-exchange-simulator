@@ -1,17 +1,21 @@
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class FakeRealtimePrice extends Thread{
+import Commands.IDisplayable;
+import Exchange.Counter;
+import Exchange.CounterManager;
+
+public class FakeRealtimePrice extends Thread {
 
     IDisplayable displayable;
 
-    public FakeRealtimePrice(IDisplayable d){
+    public FakeRealtimePrice(IDisplayable d) {
         this.displayable = d;
     }
-    
+
     @Override
-    public void run(){
-        while(true){
+    public void run() {
+        while (true) {
             simulatePrice();
             try {
                 sleep(1000);
@@ -22,19 +26,18 @@ public class FakeRealtimePrice extends Thread{
         }
     }
 
-    private void simulatePrice(){
-        HashMap<String, Counter> map  = CounterManager.instance.getCounters();
+    private void simulatePrice() {
+        HashMap<String, Counter> map = CounterManager.instance.getCounters();
 
-        for(Counter c : map.values()){
-            
+        for (Counter c : map.values()) {
+
             int increase = ThreadLocalRandom.current().nextInt(1, 2 + 1);
             double amount = ThreadLocalRandom.current().nextDouble(1, 4 + 1);
 
             c.incrementPrice(increase % 2 == 0 ? amount : -amount);
             displayable.updatePrice(increase % 2 == 0 ? amount : -amount);
         }
-        
+
     }
 
-    
 }

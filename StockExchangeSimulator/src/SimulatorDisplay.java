@@ -1,6 +1,10 @@
 
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
+
+import Commands.IDisplayable;
+import Commands.InputManager;
+import Exchange.CounterManager;
 import javafx.event.ActionEvent;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -32,17 +36,17 @@ public class SimulatorDisplay extends JFrame implements IDisplayable {
         getContentPane().add(commandField);
         getContentPane().add(btn);
 
-        //pack();
+        // pack();
 
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
 
-                //log.append("\nMarket Buy for FB at $" + price);
-                //price++;
-                //testPriceIndicator.setText("Current bid price for FB : $" + price);
+                // log.append("\nMarket Buy for FB at $" + price);
+                // price++;
+                // testPriceIndicator.setText("Current bid price for FB : $" + price);
 
-                //log.append("\n" + commandField.getText());
+                // log.append("\n" + commandField.getText());
                 InputManager.instance.handleInput(commandField.getText());
                 commandField.setText("");
 
@@ -50,22 +54,21 @@ public class SimulatorDisplay extends JFrame implements IDisplayable {
         });
     }
 
-
     @Override
     public void displayMessage(String message) {
         log.append("\n" + message);
-        
+
     }
 
     @Override
     public void updatePrice(double amt) {
-        
-        if(amt > 0)
-            testPriceIndicator.setForeground(Color.GREEN); 
+
+        if (amt > 0)
+            testPriceIndicator.setForeground(Color.GREEN);
         else
             testPriceIndicator.setForeground(Color.RED);
 
-        testPriceIndicator.setText("$"+CounterManager.instance.getCounters().get("FB").getPrice());
+        testPriceIndicator.setText("$" + CounterManager.instance.getCounters().get("FB").getPrice());
 
     }
 }

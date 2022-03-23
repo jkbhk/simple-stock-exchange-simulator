@@ -1,3 +1,5 @@
+package Commands;
+
 public class QuitCommand implements ICommand {
 
     @Override
@@ -9,5 +11,5 @@ public class QuitCommand implements ICommand {
     public String getCommandName() {
         return "QUIT";
     }
-    
+
 }

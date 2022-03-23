@@ -1,0 +1,15 @@
+ASSUMPTIONS MADE:
+
+- you cannot buy fractional quantity of stocks
+- there is no market maker
+- 
+
+
+
+TODO:
+- move countermanager inside exchange
+- implement market sell
+- test orderBookProcess thread
+- check buy and sell orders
+- add quote action
+- implement limit buy and limit sell
