@@ -31,7 +31,7 @@ public class FakeRealtimePrice extends Thread{
             double amount = ThreadLocalRandom.current().nextDouble(1, 4 + 1);
 
             c.incrementPrice(increase % 2 == 0 ? amount : -amount);
-            displayable.updatePrice();
+            displayable.updatePrice(increase % 2 == 0 ? amount : -amount);
         }
         
     }

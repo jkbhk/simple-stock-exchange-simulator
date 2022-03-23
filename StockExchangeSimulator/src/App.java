@@ -3,14 +3,15 @@ import javax.swing.JFrame;
 public class App {
     public static void main(String[] args) throws Exception {
 
-        SimulatorDisplay window = new SimulatorDisplay();
-
         CounterManager counterManager = new CounterManager(
             new Counter("FB", 211.49),
             new Counter("SNAP", 35.17)
         );
 
+        SimulatorDisplay window = new SimulatorDisplay();
+
         FakeRealtimePrice priceThread = new FakeRealtimePrice(window);
+        priceThread.start();
 
         InputManager inputManager = new InputManager(
             window,   
@@ -19,7 +20,7 @@ public class App {
         );
 
         inputManager.stopReading();
-        priceThread.start();
+        
         
 
     }

@@ -1,12 +1,10 @@
-import javax.swing.plaf.synth.SynthSeparatorUI;
-
-public class BuyCommand implements ICommand {
+public class SellCommand implements ICommand{
 
     @Override
     public void execute(String[] args) {
         
         if(args.length < 3){
-            System.out.println("BUY command requires at least 3 parameters.");
+            System.out.println("SELL command requires at least 3 parameters.");
             return;
         }
 
@@ -52,8 +50,7 @@ public class BuyCommand implements ICommand {
                 return;
             }
 
-            // TODO: do a limit buy
-            String m = "You have placed a limit buy order for " + amount + " " + counter + " shares at $" + 
+            String m = "You have placed a limit sell order for " + amount + " " + counter + " shares at $" + 
             String.format("%.2f", limit) + " each.";
             System.out.println(m);
             InputManager.instance.outputToDisplayable(m);
@@ -75,14 +72,13 @@ public class BuyCommand implements ICommand {
                 return;
             }
 
-            // TODO: do a Market buy
             String m = "You have placed a market order for " + amount + " " + counter + " shares."; 
             System.out.println(m);
             InputManager.instance.outputToDisplayable(m);
      
 
         }else{
-            System.out.println("invalid BUY command");
+            System.out.println("invalid SELL command");
             return;
         }
         
@@ -90,7 +86,7 @@ public class BuyCommand implements ICommand {
 
     @Override
     public String getCommandName() {
-        return "BUY";
+        return "SELL";
     }
     
 }

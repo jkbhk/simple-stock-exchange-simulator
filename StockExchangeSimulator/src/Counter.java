@@ -2,10 +2,12 @@ public class Counter {
    
     private String name;
     private double price;
+    private int pool;
 
     public Counter(String name, Double price){
         this.name = name;
         this.price = price;
+        this.pool = Integer.MAX_VALUE;
     }
 
     public String getName(){

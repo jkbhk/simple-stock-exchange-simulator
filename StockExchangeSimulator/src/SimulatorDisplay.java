@@ -32,7 +32,7 @@ public class SimulatorDisplay extends JFrame implements IDisplayable {
         getContentPane().add(commandField);
         getContentPane().add(btn);
 
-        pack();
+        //pack();
 
         btn.addActionListener(new ActionListener() {
             @Override
@@ -50,6 +50,7 @@ public class SimulatorDisplay extends JFrame implements IDisplayable {
         });
     }
 
+
     @Override
     public void displayMessage(String message) {
         log.append("\n" + message);
@@ -57,12 +58,9 @@ public class SimulatorDisplay extends JFrame implements IDisplayable {
     }
 
     @Override
-    public void updatePrice() {
-        // TODO Auto-generated method stub
-
-        double prev = Double.parseDouble(testPriceIndicator.getText().substring(1,testPriceIndicator.getText().length()));
-        double current = CounterManager.instance.getCounters().get("FB").getPrice();
-        if(current >= prev)
+    public void updatePrice(double amt) {
+        
+        if(amt > 0)
             testPriceIndicator.setForeground(Color.GREEN); 
         else
             testPriceIndicator.setForeground(Color.RED);

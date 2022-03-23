@@ -1,5 +1,5 @@
 public interface IDisplayable {
    
     public void displayMessage(String message);
-    public void updatePrice();
+    public void updatePrice(double amt);
 }
