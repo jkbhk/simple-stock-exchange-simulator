@@ -7,6 +7,7 @@ ASSUMPTIONS MADE:
 
 
 TODO:
+- remove non input-related checks in inputManager
 - move countermanager inside exchange
 - implement market sell
 - test orderBookProcess thread
