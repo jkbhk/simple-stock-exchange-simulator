@@ -12,7 +12,7 @@ public class ViewCommand extends GenericCommand {
     protected void handleCommand(String[] args) {
 
         if (args[0].equals("ORDERS")) {
-            SimulatorExchange.instance.getOrderBook().printOrderBook();
+            SimulatorExchange.instance.viewAllOrders();
         } else {
             System.out.println("invalid VIEW command.");
             return;

@@ -11,6 +11,7 @@ public class SellOrder extends Order {
 
     public SellOrder(Counter c, int requested, BigDecimal limit) {
         super(c, requested);
+        this.limit = limit;
     }
 
     public BigDecimal getLimit() {
@@ -28,8 +29,8 @@ public class SellOrder extends Order {
     @Override
     public String getDescription() {
         return limit == null
-                ? (counter.getName() + "MKT SELL $" + marketPriceSnapshot.toString() + " " + getStatus())
-                : (counter.getName() + "LMT SELL $" + limit.toString() + " " + getStatus());
+                ? (counter.getName() + " MKT SELL $" + marketPriceSnapshot.toString() + " " + getStatus())
+                : (counter.getName() + " LMT SELL $" + limit.toString() + " " + getStatus());
     }
 
 }

@@ -2,11 +2,15 @@ package Exchange;
 
 import java.math.BigDecimal;
 
+import Orders.Order;
+import Orders.OrderBook;
+
 public class Counter {
 
     private String name;
     private double price;
     private int pool;
+    private OrderBook orderBook;
 
     // lowest selling price
     private BigDecimal ask_price;
@@ -15,20 +19,23 @@ public class Counter {
     // last traded price
     private BigDecimal last_price;
 
-    public Counter(String name, Double price) {
+    public Counter(String name, OrderBook orderBook) {
         this.name = name;
         this.price = price;
         this.pool = Integer.MAX_VALUE;
+        this.orderBook = orderBook;
 
         this.ask_price = new BigDecimal("0.00");
         this.bid_price = new BigDecimal("0.00");
         this.last_price = new BigDecimal("0.00");
-
-        ;
     }
 
     public String getName() {
         return this.name;
+    }
+
+    public OrderBook getOrderBook() {
+        return this.orderBook;
     }
 
     public double getPrice() {

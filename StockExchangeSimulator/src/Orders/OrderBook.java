@@ -2,24 +2,20 @@ package Orders;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.PriorityQueue;
 
-import org.omg.CORBA.Request;
-
 import Exchange.Counter;
+import Exchange.SimulatorExchange;
 
 public class OrderBook {
 
     Comparator<BuyOrder> buyOrderComparator = (a, b) -> {
-        return a.getLimit().compareTo(b.getLimit());
-    };
-
-    Comparator<SellOrder> sellOrderComparator = (a, b) -> {
         return b.getLimit().compareTo(a.getLimit());
     };
 
-    private HashMap<String, Order> orders = new HashMap<>();
+    Comparator<SellOrder> sellOrderComparator = (a, b) -> {
+        return a.getLimit().compareTo(b.getLimit());
+    };
 
     private PriorityQueue<BuyOrder> buyOrders = new PriorityQueue<>(buyOrderComparator);
     private PriorityQueue<SellOrder> sellOrders = new PriorityQueue<>(sellOrderComparator);
@@ -60,35 +56,47 @@ public class OrderBook {
 
     private OrderBookProcess orderBookProcess = new OrderBookProcess();
 
+    public void printTest() {
+        System.out.println(buyOrders.peek().getLimit());
+    }
+
     public OrderBook() {
         // orderBookProcess.start();
     }
 
-    public void printOrderBook() {
-        for (Order o : orders.values()) {
-            System.out.println(o.getDescription());
-        }
-    }
-
     // market buy
-    public void addBuyOrder(Counter c, int amount) {
+    public String addBuyOrder(Counter c, int amount) {
         BuyOrder bo = new BuyOrder(c, amount, null);
         bo.setMarketPriceSnapshot(c.getAsk());
-
-        orders.put(bo.getID(), bo);
-
+        SimulatorExchange.instance.recordOrder(bo);
+        return bo.getID();
     }
 
-    public void addLimitBuyOrder(Counter c, BigDecimal limit, int amount) {
+    // limit buy
+    public String addLimitBuyOrder(Counter c, BigDecimal limit, int amount) {
+        BuyOrder bo = new BuyOrder(c, amount, limit);
+        SimulatorExchange.instance.recordOrder(bo);
+        buyOrders.add(bo);
 
+        return bo.getID();
     }
 
-    public void addSellOrder(Counter c, int amount) {
+    // market sell
+    public String addSellOrder(Counter c, int amount) {
+        SellOrder so = new SellOrder(c, amount, null);
+        so.setMarketPriceSnapshot(c.getAsk());
+        SimulatorExchange.instance.recordOrder(so);
 
+        return so.getID();
     }
 
-    public void addLimitSellOrder(Counter c, BigDecimal limit, int amount) {
+    // limit sell
+    public String addLimitSellOrder(Counter c, BigDecimal limit, int amount) {
+        SellOrder so = new SellOrder(c, amount, limit);
+        SimulatorExchange.instance.recordOrder(so);
+        sellOrders.add(so);
 
+        return so.getID();
     }
 
 }
