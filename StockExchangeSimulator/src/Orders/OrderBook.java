@@ -17,8 +17,8 @@ public class OrderBook {
         return a.getLimit().compareTo(b.getLimit());
     };
 
-    private PriorityQueue<BuyOrder> buyOrders = new PriorityQueue<>(buyOrderComparator);
-    private PriorityQueue<SellOrder> sellOrders = new PriorityQueue<>(sellOrderComparator);
+    private PriorityQueue<BuyOrder> buyOrders;
+    private PriorityQueue<SellOrder> sellOrders;
 
     private class OrderBookProcess extends Thread {
 
@@ -27,10 +27,20 @@ public class OrderBook {
 
             while (true) {
 
+                try {
+                    System.out.println(getId() + " : " + buyOrders.size());
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+
+                    e.printStackTrace();
+                }
+
                 if (!buyOrders.isEmpty()) {
                     BuyOrder bo = buyOrders.peek();
 
                     while (bo.filled < bo.requested) {
+
                         if (!sellOrders.isEmpty()) {
                             SellOrder so = sellOrders.peek();
                             if (bo.getRemainingRequested() >= so.getRemainingRequested()) {
@@ -49,19 +59,23 @@ public class OrderBook {
                     buyOrders.poll();
 
                 }
+
             }
         }
 
     }
 
-    private OrderBookProcess orderBookProcess = new OrderBookProcess();
+    private OrderBookProcess orderBookProcess;
 
     public void printTest() {
         System.out.println(buyOrders.peek().getLimit());
     }
 
     public OrderBook() {
-        // orderBookProcess.start();
+        buyOrders = new PriorityQueue<>(buyOrderComparator);
+        sellOrders = new PriorityQueue<>(sellOrderComparator);
+        orderBookProcess = new OrderBookProcess();
+        orderBookProcess.start();
     }
 
     // market buy
@@ -78,6 +92,7 @@ public class OrderBook {
         SimulatorExchange.instance.recordOrder(bo);
         buyOrders.add(bo);
 
+        System.out.println(buyOrders.size());
         return bo.getID();
     }
 

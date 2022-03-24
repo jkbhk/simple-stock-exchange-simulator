@@ -7,7 +7,6 @@ ASSUMPTIONS MADE:
 
 
 TODO:
-- move countermanager inside exchange
 - implement market sell
 - test orderBookProcess thread
 - implement limit buy and limit sell
