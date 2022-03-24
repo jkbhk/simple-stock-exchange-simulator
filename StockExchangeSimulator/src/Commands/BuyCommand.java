@@ -7,7 +7,11 @@ import Exchange.Counter;
 import Exchange.CounterManager;
 import Exchange.SimulatorExchange;
 
-public class BuyCommand implements ICommand {
+public class BuyCommand extends GenericCommand implements ICommand {
+
+    public BuyCommand(String name) {
+        super(name);
+    }
 
     @Override
     public void execute(String[] args) {
@@ -97,6 +101,11 @@ public class BuyCommand implements ICommand {
     @Override
     public String getCommandName() {
         return "BUY";
+    }
+
+    @Override
+    protected void handleCommand(String[] args) {
+
     }
 
 }

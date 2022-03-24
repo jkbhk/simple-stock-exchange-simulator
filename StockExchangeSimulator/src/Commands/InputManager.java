@@ -11,6 +11,7 @@ public class InputManager {
     private IDisplayable displayable;
 
     private HashMap<String, ICommand> commandMap = new HashMap<>();
+    private HashMap<String, GenericCommand> commands = new HashMap<>();
     private Scanner scanner = new Scanner(System.in);
 
     public InputManager(IDisplayable displayable, ICommand... commands) {
@@ -21,6 +22,17 @@ public class InputManager {
         for (ICommand c : commands) {
             if (!c.getCommandName().equals(""))
                 commandMap.put(c.getCommandName(), c);
+        }
+    }
+
+    public InputManager(IDisplayable displayable, GenericCommand... commands) {
+
+        instance = this;
+        this.displayable = displayable;
+
+        for (GenericCommand c : commands) {
+            if (!c.getCommandName().equals(""))
+                this.commands.put(c.getCommandName(), c);
         }
     }
 
@@ -46,23 +58,31 @@ public class InputManager {
 
         String[] parts = input.split(" ");
 
-        if (parts.length > 1) {
-
+        try {
             String commandType = parts[0];
-            String key = parts[1];
-            String args[] = Arrays.copyOfRange(parts, 2, parts.length);
 
             switch (commandType) {
                 case "Action:":
-                    if (commandMap.containsKey(key)) {
-                        commandMap.get(key).execute(args);
+
+                    String commandName = parts[1];
+
+                    if (commands.containsKey(commandName)) {
+
+                        String args[] = Arrays.copyOfRange(parts, 2, parts.length);
+                        commands.get(commandName).tryExecute(args);
+                    } else {
+                        System.out.println("no such Action");
                     }
                     break;
+
                 default:
-                    System.out.println("unknown command");
+                    System.out.println("invalid command");
                     break;
             }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("invalid command");
         }
+
     }
 
 }

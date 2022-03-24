@@ -1,15 +1,14 @@
 package Commands;
 
-public class QuitCommand implements ICommand {
+public class QuitCommand extends GenericCommand {
 
-    @Override
-    public void execute(String[] args) {
-        System.exit(0);
+    public QuitCommand(String name) {
+        super(name);
     }
 
     @Override
-    public String getCommandName() {
-        return "QUIT";
+    protected void handleCommand(String[] args) {
+        System.exit(0);
     }
 
 }

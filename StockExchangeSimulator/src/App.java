@@ -1,10 +1,7 @@
 import javax.jws.soap.InitParam;
 import javax.swing.JFrame;
 
-import Commands.BuyCommand;
-import Commands.InputManager;
-import Commands.QuitCommand;
-import Commands.ViewCommand;
+import Commands.*;
 import Exchange.Counter;
 import Exchange.CounterManager;
 import Exchange.SimulatorExchange;
@@ -23,11 +20,20 @@ public class App {
 
         SimulatorExchange simulatorExchange = new SimulatorExchange();
 
+        /*
+         * InputManager inputManager = new InputManager(
+         * null,
+         * new BuyCommand(),
+         * new SellCommand(),
+         * new QuitCommand(),
+         * new ViewCommand());
+         * 
+         */
+
         InputManager inputManager = new InputManager(
                 null,
-                new BuyCommand(),
-                new QuitCommand(),
-                new ViewCommand());
+                new QuitCommand("QUIT"),
+                new SellCommand("SELL"));
 
         inputManager.requestInput();
 

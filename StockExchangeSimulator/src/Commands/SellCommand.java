@@ -1,16 +1,17 @@
 package Commands;
 
+import java.math.BigDecimal;
+
 import Exchange.CounterManager;
 
-public class SellCommand implements ICommand {
+public class SellCommand extends GenericCommand {
+
+    public SellCommand(String name) {
+        super(name);
+    }
 
     @Override
-    public void execute(String[] args) {
-
-        if (args.length < 3) {
-            System.out.println("SELL command requires at least 3 parameters.");
-            return;
-        }
+    protected void handleCommand(String[] args) {
 
         String counter = args[0];
         String type = args[1];
@@ -23,57 +24,27 @@ public class SellCommand implements ICommand {
 
         if (type.equals("LMT")) {
 
-            // procedural check
-
-            if (args.length != 4) {
-                System.out.println("invalid LMT command.");
+            if (!CommandUtils.isValidCurrencyAmount(args[2])) {
+                System.out.println("invalid amount");
                 return;
             }
 
-            if (!args[2].contains("$")) {
-                System.out.println("invalid LMT command, please denote limit with ($)");
+            BigDecimal limit = CommandUtils.getAmountFromString(args[2]);
+            if (limit.doubleValue() < 0) {
+                System.out.println("amount cannot be negative");
                 return;
             }
 
-            double limit = 0;
-
-            try {
-                limit = Double.parseDouble(args[2].substring(1, args[2].length()));
-            } catch (NumberFormatException nfe) {
-                System.out.println("invalid LMT command");
-                return;
-            }
-
-            int amount = 0;
-
-            try {
-                amount = Integer.parseInt(args[3]);
-            } catch (NumberFormatException nfe) {
-                System.out.println("invalid LMT command");
-                return;
-            }
+            int amount = Integer.parseInt(args[3]);
 
             String m = "You have placed a limit sell order for " + amount + " " + counter + " shares at $" +
-                    String.format("%.2f", limit) + " each.";
+                    limit + " each.";
             System.out.println(m);
             InputManager.instance.outputToDisplayable(m);
 
         } else if (type.equals("MKT")) {
 
-            if (args.length != 3) {
-                System.out.println("invalid MKT command.");
-                return;
-            }
-
-            int amount = 0;
-
-            try {
-                amount = Integer.parseInt(args[2]);
-            } catch (NumberFormatException nfe) {
-                System.out.println("invalid MKT command");
-                return;
-            }
-
+            int amount = Integer.parseInt(args[2]);
             String m = "You have placed a market order for " + amount + " " + counter + " shares.";
             System.out.println(m);
             InputManager.instance.outputToDisplayable(m);
@@ -83,11 +54,6 @@ public class SellCommand implements ICommand {
             return;
         }
 
-    }
-
-    @Override
-    public String getCommandName() {
-        return "SELL";
     }
 
 }
