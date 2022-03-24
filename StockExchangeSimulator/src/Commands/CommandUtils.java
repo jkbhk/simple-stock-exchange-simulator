@@ -23,7 +23,7 @@ public class CommandUtils {
 
     public static BigDecimal getAmountFromString(String s) {
         try {
-            return new BigDecimal(s.substring(1, s.length()));
+            return new BigDecimal(s.substring(1, s.length())).setScale(2);
         } catch (Exception e) {
             return new BigDecimal("0.00");
         }

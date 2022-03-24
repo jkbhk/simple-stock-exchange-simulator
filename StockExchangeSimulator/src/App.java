@@ -33,7 +33,8 @@ public class App {
         InputManager inputManager = new InputManager(
                 null,
                 new QuitCommand("QUIT"),
-                new SellCommand("SELL"));
+                new SellCommand("SELL"),
+                new BuyCommand("BUY"));
 
         inputManager.requestInput();
 

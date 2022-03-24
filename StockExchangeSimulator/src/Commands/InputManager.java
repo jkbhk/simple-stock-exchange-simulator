@@ -9,21 +9,8 @@ public class InputManager {
     public static InputManager instance;
 
     private IDisplayable displayable;
-
-    private HashMap<String, ICommand> commandMap = new HashMap<>();
     private HashMap<String, GenericCommand> commands = new HashMap<>();
     private Scanner scanner = new Scanner(System.in);
-
-    public InputManager(IDisplayable displayable, ICommand... commands) {
-
-        instance = this;
-        this.displayable = displayable;
-
-        for (ICommand c : commands) {
-            if (!c.getCommandName().equals(""))
-                commandMap.put(c.getCommandName(), c);
-        }
-    }
 
     public InputManager(IDisplayable displayable, GenericCommand... commands) {
 
@@ -79,7 +66,7 @@ public class InputManager {
                     System.out.println("invalid command");
                     break;
             }
-        } catch (ArrayIndexOutOfBoundsException e) {
+        } catch (Exception e) {
             System.out.println("invalid command");
         }
 

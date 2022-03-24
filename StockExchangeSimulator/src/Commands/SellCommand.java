@@ -31,11 +31,15 @@ public class SellCommand extends GenericCommand {
 
             BigDecimal limit = CommandUtils.getAmountFromString(args[2]);
             if (limit.doubleValue() < 0) {
-                System.out.println("amount cannot be negative");
+                System.out.println("limit cannot be negative");
                 return;
             }
 
             int amount = Integer.parseInt(args[3]);
+            if (amount < 0) {
+                System.out.println("amount cannot be negative");
+                return;
+            }
 
             String m = "You have placed a limit sell order for " + amount + " " + counter + " shares at $" +
                     limit + " each.";
