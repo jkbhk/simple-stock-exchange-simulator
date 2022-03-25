@@ -1,12 +1,7 @@
 ASSUMPTIONS MADE:
 
 - you cannot buy fractional quantity of stocks
-- there is no market maker
-- $0.01 is the smallest denomination
-- exchange is single threaded because of only 1 user session
-- MKT BUY shows the average price of all transactions that filled it
+- exchange is single threaded because of only 1 user session (which is the current instance of the program)
+- MKT BUY shows the average price of all transactions that filled it (judging from the sample run)
 
 
-
-TODO:
-- show average of market order after its done

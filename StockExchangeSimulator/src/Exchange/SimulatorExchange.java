@@ -11,14 +11,17 @@ public class SimulatorExchange {
 
     public static SimulatorExchange instance;
     private HashMap<String, Counter> counters = new HashMap<>();
+
+    // all orders of the exchange, can be changed to hash map if needs to be
+    // searched
     private ArrayList<Order> orderList = new ArrayList<>();
 
-    public SimulatorExchange(String... names) {
+    public SimulatorExchange(String[] names) {
         instance = this;
 
         // set up fake counters
         for (String n : names) {
-            Counter temp = new Counter(n, new OrderBook());
+            Counter temp = new Counter(n, new OrderBook(n));
             counters.put(n, temp);
         }
     }

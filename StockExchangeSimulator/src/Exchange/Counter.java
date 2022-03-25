@@ -1,8 +1,5 @@
 package Exchange;
 
-import java.math.BigDecimal;
-
-import Orders.Order;
 import Orders.OrderBook;
 
 public class Counter {

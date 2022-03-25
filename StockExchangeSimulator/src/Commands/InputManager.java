@@ -8,24 +8,17 @@ public class InputManager {
 
     public static InputManager instance;
 
-    private IDisplayable displayable;
     private HashMap<String, GenericCommand> commands = new HashMap<>();
     private Scanner scanner = new Scanner(System.in);
 
-    public InputManager(IDisplayable displayable, GenericCommand... commands) {
+    public InputManager(GenericCommand[] commands) {
 
         instance = this;
-        this.displayable = displayable;
 
         for (GenericCommand c : commands) {
             if (!c.getCommandName().equals(""))
                 this.commands.put(c.getCommandName(), c);
         }
-    }
-
-    public void outputToDisplayable(String m) {
-        if (displayable != null)
-            displayable.displayMessage(m);
     }
 
     public void requestInput() {

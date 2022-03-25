@@ -1,6 +1,9 @@
 package Orders;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class Order {
@@ -20,6 +23,21 @@ public class Order {
         }
     }
 
+    public static enum STATUS {
+
+        PENDING("PENDING"), PARTIAL("PARTIAL"), FILLED("FILLED");
+
+        private String value;
+
+        public String getValue() {
+            return this.value;
+        }
+
+        private STATUS(String value) {
+            this.value = value;
+        }
+    }
+
     protected String orderID;
     protected int filled;
     protected int requested;
@@ -27,6 +45,9 @@ public class Order {
     protected BigDecimal limit;
     protected boolean isMarketOrder;
     protected TYPE orderType;
+    protected STATUS orderStatus;
+
+    protected ArrayList<Transaction> transactions = new ArrayList<>();
 
     public Order(String counter, TYPE orderType, int requested, BigDecimal limit) {
         this.orderID = UUID.randomUUID().toString();
@@ -36,6 +57,11 @@ public class Order {
         this.counter = counter;
         this.limit = limit;
         this.isMarketOrder = (limit == null);
+        this.orderStatus = STATUS.PENDING;
+    }
+
+    public void addTransaction(Transaction t) {
+        transactions.add(t);
     }
 
     public Boolean isMarketOrder() {
@@ -64,9 +90,11 @@ public class Order {
 
         if (overflow > 0) {
             filled = requested;
+            updateStatus();
             return overflow;
         } else {
             filled += amount;
+            updateStatus();
             return 0;
         }
     }
@@ -87,26 +115,51 @@ public class Order {
         return filled == requested;
     }
 
-    public String getStatus() {
+    public String getRatio() {
+        return filled + "/" + requested;
+    }
 
-        String m = "";
-
-        if (filled == requested) {
-            m = "FILLED";
-        } else {
-            if (filled == 0) {
-                m = "PENDING";
-            } else {
-                m = "PARTIAL";
-            }
-        }
-
-        return filled + "/" + requested + " " + m;
+    public STATUS getStatus() {
+        return this.orderStatus;
     }
 
     public String getDescription() {
-        return isMarketOrder ? counter + " MKT " + orderType.getValue() + " " + getStatus()
-                : counter + " LMT " + orderType.getValue() + " $" + limit + " " + getStatus();
+
+        if (isMarketOrder) {
+            return isFilled()
+                    ? counter + " MKT " + orderType.getValue() + " $" + calculateAverageTransaction() + " " + getRatio()
+                            + " " + getStatus().getValue()
+                    : counter + " MKT " + orderType.getValue() + " " + getRatio() + " " + getStatus().getValue();
+        } else {
+            return counter + " LMT " + orderType.getValue() + " $" + limit + " " + getRatio() + " " + getStatus();
+        }
+    }
+
+    private void updateStatus() {
+        if (filled == requested) {
+            orderStatus = STATUS.FILLED;
+        } else {
+            if (filled == 0) {
+                orderStatus = STATUS.PENDING;
+            } else {
+                orderStatus = STATUS.PARTIAL;
+            }
+        }
+    }
+
+    private BigDecimal calculateAverageTransaction() {
+
+        BigDecimal total = new BigDecimal(BigInteger.ZERO, 2);
+        BigDecimal divisor = new BigDecimal(BigInteger.ZERO, 0);
+
+        for (Transaction t : transactions) {
+            BigDecimal transactionCost = t.getPrice().multiply(BigDecimal.valueOf(t.getAmount()));
+            total = total.add(transactionCost);
+            divisor = divisor.add(BigDecimal.valueOf(t.getAmount()));
+        }
+
+        BigDecimal avg = total.divide(divisor, RoundingMode.HALF_UP);
+        return avg.setScale(2);
     }
 
 }
