@@ -29,11 +29,8 @@ public class InputManager {
     }
 
     public void requestInput() {
-
-        while (true) {
-            System.out.println("enter command:");
-            handleInput(scanner.nextLine());
-        }
+        System.out.println("enter command:");
+        handleInput(scanner.nextLine());
 
     }
 

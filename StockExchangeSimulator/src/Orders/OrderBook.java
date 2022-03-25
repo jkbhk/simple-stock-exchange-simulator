@@ -9,109 +9,129 @@ import Exchange.SimulatorExchange;
 
 public class OrderBook {
 
-    Comparator<BuyOrder> buyOrderComparator = (a, b) -> {
+    Comparator<Order> buyOrderComparator = (a, b) -> {
         return b.getLimit().compareTo(a.getLimit());
     };
 
-    Comparator<SellOrder> sellOrderComparator = (a, b) -> {
+    Comparator<Order> sellOrderComparator = (a, b) -> {
         return a.getLimit().compareTo(b.getLimit());
     };
 
-    private PriorityQueue<BuyOrder> buyOrders;
-    private PriorityQueue<SellOrder> sellOrders;
+    private PriorityQueue<Order> buyOrders;
+    private PriorityQueue<Order> sellOrders;
 
-    private class OrderBookProcess extends Thread {
+    // lowest selling price
+    private BigDecimal ask_price = new BigDecimal("0.00");
+    // highest buying price
+    private BigDecimal bid_price = new BigDecimal("0.00");
+    // last traded price
+    private BigDecimal last_price = new BigDecimal("0.00");
 
-        @Override
-        public void run() {
+    // currently configured for single threaded exchange
+    public void update() {
+        processOrders();
+        updatePrices();
+    }
 
-            while (true) {
+    private void processOrders() {
 
-                try {
-                    System.out.println(getId() + " : " + buyOrders.size());
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
+        while (!buyOrders.isEmpty()) {
+            Order bo = buyOrders.peek();
 
-                    e.printStackTrace();
-                }
+            while (bo.filled < bo.requested) {
 
-                if (!buyOrders.isEmpty()) {
-                    BuyOrder bo = buyOrders.peek();
+                if (!sellOrders.isEmpty()) {
 
-                    while (bo.filled < bo.requested) {
+                    Order so = sellOrders.peek();
 
-                        if (!sellOrders.isEmpty()) {
-                            SellOrder so = sellOrders.peek();
-                            if (bo.getRemainingRequested() >= so.getRemainingRequested()) {
-                                // complete one sell order
-                                bo.fill(so.getRemainingRequested());
-                                so.fill(so.getRemainingRequested());
-                                sellOrders.poll();
-                            } else {
-                                // complete the buy order
-                                bo.fill(bo.getRemainingRequested());
-                                so.fill(bo.getRemainingRequested());
-                                break;
-                            }
+                    if (bo.getLimit().doubleValue() >= so.getLimit().doubleValue()) {
+
+                        if (bo.getRemainingRequested() >= so.getRemainingRequested()) {
+                            // complete one sell order
+                            bo.fill(so.getRemainingRequested());
+                            so.fill(so.getRemainingRequested());
+
+                            last_price = new BigDecimal(so.getLimit().toString());
+                            sellOrders.poll();
+                        } else {
+                            // complete the buy order
+                            so.fill(bo.getRemainingRequested());
+                            bo.fill(bo.getRemainingRequested());
+
+                            last_price = new BigDecimal(so.getLimit().toString());
+                            break;
                         }
+                    } else {
+                        // the smallest ask does not match the largest bid
+                        return;
                     }
-                    buyOrders.poll();
 
+                } else {
+                    // no sell orders to fufil the buy order at the moment
+                    return;
                 }
-
             }
+
+            buyOrders.poll();
         }
+    }
+
+    private void updatePrices() {
+        if (!sellOrders.isEmpty())
+            ask_price = sellOrders.peek().getLimit();
+
+        if (!buyOrders.isEmpty())
+            bid_price = buyOrders.peek().getLimit();
 
     }
 
-    private OrderBookProcess orderBookProcess;
+    public BigDecimal getAsk() {
+        return this.ask_price;
+    }
 
-    public void printTest() {
-        System.out.println(buyOrders.peek().getLimit());
+    public BigDecimal getBid() {
+        return this.bid_price;
+    }
+
+    public BigDecimal getlast() {
+        return this.last_price;
     }
 
     public OrderBook() {
         buyOrders = new PriorityQueue<>(buyOrderComparator);
         sellOrders = new PriorityQueue<>(sellOrderComparator);
-        orderBookProcess = new OrderBookProcess();
-        orderBookProcess.start();
     }
 
     // market buy
-    public String addBuyOrder(Counter c, int amount) {
-        BuyOrder bo = new BuyOrder(c, amount, null);
-        bo.setMarketPriceSnapshot(c.getAsk());
-        SimulatorExchange.instance.recordOrder(bo);
-        return bo.getID();
+    public Order addBuyOrder(String counter, int amount) {
+        Order bo = new Order(counter, Order.TYPE.BUY, amount, null);
+
+        bo.limit = new BigDecimal(Double.MAX_VALUE).setScale(2);
+        buyOrders.add(bo);
+        return bo;
     }
 
     // limit buy
-    public String addLimitBuyOrder(Counter c, BigDecimal limit, int amount) {
-        BuyOrder bo = new BuyOrder(c, amount, limit);
-        SimulatorExchange.instance.recordOrder(bo);
+    public Order addLimitBuyOrder(String counter, BigDecimal limit, int amount) {
+        Order bo = new Order(counter, Order.TYPE.BUY, amount, limit);
         buyOrders.add(bo);
-
-        System.out.println(buyOrders.size());
-        return bo.getID();
+        return bo;
     }
 
     // market sell
-    public String addSellOrder(Counter c, int amount) {
-        SellOrder so = new SellOrder(c, amount, null);
-        so.setMarketPriceSnapshot(c.getAsk());
-        SimulatorExchange.instance.recordOrder(so);
+    public Order addSellOrder(String counter, int amount) {
+        Order so = new Order(counter, Order.TYPE.SELL, amount, null);
 
-        return so.getID();
+        so.limit = new BigDecimal("0.00");
+        sellOrders.add(so);
+        return so;
     }
 
     // limit sell
-    public String addLimitSellOrder(Counter c, BigDecimal limit, int amount) {
-        SellOrder so = new SellOrder(c, amount, limit);
-        SimulatorExchange.instance.recordOrder(so);
+    public Order addLimitSellOrder(String counter, BigDecimal limit, int amount) {
+        Order so = new Order(counter, Order.TYPE.SELL, amount, limit);
         sellOrders.add(so);
-
-        return so.getID();
+        return so;
     }
 
 }

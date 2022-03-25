@@ -22,16 +22,19 @@ public class SimulatorExchange {
         }
     }
 
+    public void update() {
+        // process all orderbook
+        for (Counter c : counters.values()) {
+            c.getOrderBook().update();
+        }
+    }
+
     public boolean isValidCounter(String counter) {
         return counters.get(counter) != null;
     }
 
     public Counter getCounter(String name) {
         return counters.get(name);
-    }
-
-    public void recordOrder(Order o) {
-        orders.put(o.getID(), o);
     }
 
     public void viewAllOrders() {
@@ -46,8 +49,10 @@ public class SimulatorExchange {
 
         Counter c = counters.get(counter);
 
-        if (c != null) {
-            c.getOrderBook().addBuyOrder(c, amount);
+        if (counters.get(counter) != null) {
+            Order order = c.getOrderBook().addBuyOrder(counter, amount);
+            orders.put(order.getID(), order);
+
             String m = "You have placed a market order for " + amount + " " + counter + " shares.";
             System.out.println(m);
         } else
@@ -60,7 +65,9 @@ public class SimulatorExchange {
         Counter c = counters.get(counter);
 
         if (c != null) {
-            c.getOrderBook().addLimitBuyOrder(c, limit, amount);
+            Order order = c.getOrderBook().addLimitBuyOrder(counter, limit, amount);
+            orders.put(order.getID(), order);
+
             String m = "You have placed a limit buy order for " + amount + " " + counter + " shares at $" +
                     limit + " each.";
             System.out.println(m);
@@ -73,7 +80,9 @@ public class SimulatorExchange {
         Counter c = counters.get(counter);
 
         if (c != null) {
-            c.getOrderBook().addSellOrder(c, amount);
+            Order order = c.getOrderBook().addSellOrder(counter, amount);
+            orders.put(order.getID(), order);
+
             String m = "You have placed a market order for " + amount + " " + counter + " shares.";
             System.out.println(m);
         } else
@@ -86,7 +95,8 @@ public class SimulatorExchange {
         Counter c = counters.get(counter);
 
         if (c != null) {
-            c.getOrderBook().addLimitSellOrder(c, limit, amount);
+            Order order = c.getOrderBook().addLimitSellOrder(counter, limit, amount);
+            orders.put(order.getID(), order);
             String m = "You have placed a limit sell order for " + amount + " " + counter + " shares at $" +
                     limit + " each.";
             System.out.println(m);

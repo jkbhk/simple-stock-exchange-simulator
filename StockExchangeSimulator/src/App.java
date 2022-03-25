@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 import javax.jws.soap.InitParam;
 import javax.swing.JFrame;
 
@@ -23,7 +25,10 @@ public class App {
                 new ViewCommand("VIEW"),
                 new QuoteCommand("QUOTE"));
 
-        inputManager.requestInput();
+        while (true) {
+            inputManager.requestInput();
+            simulatorExchange.update();
+        }
 
     }
 

@@ -1,25 +1,49 @@
 package Orders;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
-import Exchange.Counter;
+public class Order {
 
-public abstract class Order {
+    public static enum TYPE {
 
-    public static enum STATUS {
-        PENDING, PARTIAL, FILLED
-    };
+        BUY("BUY"), SELL("SELL");
+
+        private String value;
+
+        public String getValue() {
+            return this.value;
+        }
+
+        private TYPE(String value) {
+            this.value = value;
+        }
+    }
 
     protected String orderID;
     protected int filled;
     protected int requested;
-    protected Counter counter;
+    protected String counter;
+    protected BigDecimal limit;
+    protected boolean isMarketOrder;
+    protected TYPE orderType;
 
-    public Order(Counter c, int requested) {
+    public Order(String counter, TYPE orderType, int requested, BigDecimal limit) {
         this.orderID = UUID.randomUUID().toString();
         this.filled = 0;
         this.requested = requested;
-        this.counter = c;
+        this.orderType = orderType;
+        this.counter = counter;
+        this.limit = limit;
+        this.isMarketOrder = (limit == null);
+    }
+
+    public Boolean isMarketOrder() {
+        return this.isMarketOrder;
+    }
+
+    public String getCounterName() {
+        return this.counter;
     }
 
     public String getID() {
@@ -45,7 +69,14 @@ public abstract class Order {
             filled += amount;
             return 0;
         }
+    }
 
+    public BigDecimal getLimit() {
+        return limit;
+    }
+
+    public void setLimit(BigDecimal bd) {
+        this.limit = bd;
     }
 
     public int getRemainingRequested() {
@@ -74,7 +105,8 @@ public abstract class Order {
     }
 
     public String getDescription() {
-        return "GENERIC ORDER DESCRIPTION";
+        return isMarketOrder ? counter + " MKT " + orderType.getValue() + " " + getStatus()
+                : counter + " LMT " + orderType.getValue() + " $" + limit + " " + getStatus();
     }
 
 }

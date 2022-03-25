@@ -3,10 +3,11 @@ ASSUMPTIONS MADE:
 - you cannot buy fractional quantity of stocks
 - there is no market maker
 - $0.01 is the smallest denomination
+- exchange is single threaded because of only 1 user session
+- MKT BUY shows the average price of all transactions that filled it
 
 
 
 TODO:
-- implement market sell
-- test orderBookProcess thread
-- implement limit buy and limit sell
+- add numbering and ordering of orders
+- show average of market order after its done

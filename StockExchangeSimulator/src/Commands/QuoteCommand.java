@@ -17,7 +17,8 @@ public class QuoteCommand extends GenericCommand {
             return;
         } else {
             System.out
-                    .println(c.getName() + " BID: $" + c.getBid() + " ASK: $" + c.getAsk() + " LAST: $" + c.getlast());
+                    .println(c.getName() + " BID: $" + c.getOrderBook().getBid() + " ASK: $" + c.getOrderBook().getAsk()
+                            + " LAST: $" + c.getOrderBook().getlast());
         }
     }
 
