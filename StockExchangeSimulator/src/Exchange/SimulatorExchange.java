@@ -1,6 +1,7 @@
 package Exchange;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import Orders.Order;
@@ -10,7 +11,7 @@ public class SimulatorExchange {
 
     public static SimulatorExchange instance;
     private HashMap<String, Counter> counters = new HashMap<>();
-    private HashMap<String, Order> orders = new HashMap<>();
+    private ArrayList<Order> orderList = new ArrayList<>();
 
     public SimulatorExchange(String... names) {
         instance = this;
@@ -39,8 +40,11 @@ public class SimulatorExchange {
 
     public void viewAllOrders() {
 
-        for (Order o : orders.values()) {
-            System.out.println(o.getDescription());
+        int counter = 1;
+
+        for (Order o : orderList) {
+            System.out.println(counter + ". " + o.getDescription());
+            counter++;
         }
     }
 
@@ -51,7 +55,7 @@ public class SimulatorExchange {
 
         if (counters.get(counter) != null) {
             Order order = c.getOrderBook().addBuyOrder(counter, amount);
-            orders.put(order.getID(), order);
+            orderList.add(order);
 
             String m = "You have placed a market order for " + amount + " " + counter + " shares.";
             System.out.println(m);
@@ -66,7 +70,7 @@ public class SimulatorExchange {
 
         if (c != null) {
             Order order = c.getOrderBook().addLimitBuyOrder(counter, limit, amount);
-            orders.put(order.getID(), order);
+            orderList.add(order);
 
             String m = "You have placed a limit buy order for " + amount + " " + counter + " shares at $" +
                     limit + " each.";
@@ -81,7 +85,7 @@ public class SimulatorExchange {
 
         if (c != null) {
             Order order = c.getOrderBook().addSellOrder(counter, amount);
-            orders.put(order.getID(), order);
+            orderList.add(order);
 
             String m = "You have placed a market order for " + amount + " " + counter + " shares.";
             System.out.println(m);
@@ -96,7 +100,7 @@ public class SimulatorExchange {
 
         if (c != null) {
             Order order = c.getOrderBook().addLimitSellOrder(counter, limit, amount);
-            orders.put(order.getID(), order);
+            orderList.add(order);
             String m = "You have placed a limit sell order for " + amount + " " + counter + " shares at $" +
                     limit + " each.";
             System.out.println(m);

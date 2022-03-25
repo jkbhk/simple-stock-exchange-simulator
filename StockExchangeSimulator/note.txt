@@ -9,5 +9,4 @@ ASSUMPTIONS MADE:
 
 
 TODO:
-- add numbering and ordering of orders
 - show average of market order after its done
